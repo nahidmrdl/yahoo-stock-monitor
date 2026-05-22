@@ -13,11 +13,14 @@
         <div>
           <h1>Stock Monitor</h1>
           <p class="subtitle">
-            Yahoo Finance quotes · auto-refresh every <span id="refreshSeconds">30</span>s
+            Yahoo Finance quotes / Configured refresh: every
+            <span id="refreshIntervalLabel">30</span>s
           </p>
         </div>
 
         <div class="top-actions">
+          <button id="viewModeBtn" class="secondary" type="button">Widget mode</button>
+          <button id="widgetBackBtn" class="secondary hidden" type="button">Back to grid</button>
           <button id="refreshNowBtn" class="secondary" type="button">Refresh now</button>
           <button id="pauseBtn" class="secondary" type="button">Pause</button>
           <button id="alwaysOnTopBtn" class="secondary" type="button">Pin window</button>
@@ -60,6 +63,8 @@
 
       <section class="status-row">
         <span id="statusText">Ready.</span>
+        <span id="widgetPageText" class="hidden"></span>
+        <span id="refreshCountdownText">Next refresh in 30s</span>
         <span id="lastUpdated">Not updated yet.</span>
       </section>
 
@@ -86,20 +91,20 @@
           </div>
 
           <div class="card-actions">
-            <button class="drag-handle" type="button" title="Drag to reorder">⋮⋮</button>
-            <button class="move-btn move-left-btn" type="button" title="Move left">←</button>
-            <button class="move-btn move-right-btn" type="button" title="Move right">→</button>
-            <button class="remove-btn" type="button" title="Remove ticker">×</button>
+            <button class="drag-handle" type="button" title="Drag to reorder">::</button>
+            <button class="move-btn move-left-btn" type="button" title="Move left">&lt;</button>
+            <button class="move-btn move-right-btn" type="button" title="Move right">&gt;</button>
+            <button class="remove-btn" type="button" title="Remove ticker">&times;</button>
           </div>
         </div>
 
         <div class="price-row">
-          <span class="price">—</span>
+          <span class="price">-</span>
           <span class="currency"></span>
         </div>
 
         <div class="change-row">
-          <span class="change-pill">—</span>
+          <span class="change-pill">-</span>
           <span class="meta"></span>
         </div>
 
@@ -114,6 +119,16 @@
     </template>
 
     <script src="../../node_modules/chart.js/dist/chart.umd.js"></script>
+    <script src="state/constants.js"></script>
+    <script src="state/storage.js"></script>
+    <script src="services/stockApi.js"></script>
+    <script src="ui/dom.js"></script>
+    <script src="ui/formatting.js"></script>
+    <script src="ui/charts.js"></script>
+    <script src="ui/cards.js"></script>
+    <script src="ui/controls.js"></script>
+    <script src="ui/modes.js"></script>
+    <script src="ui/timers.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

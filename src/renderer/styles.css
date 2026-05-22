@@ -20,10 +20,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(89, 86, 233, 0.16), transparent 28%),
-    radial-gradient(circle at top right, rgba(53, 208, 127, 0.1), transparent 26%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
 }
 
@@ -156,6 +153,7 @@ button.pinned {
   min-height: 18px;
   margin-bottom: 10px;
   font-size: 12px;
+  flex-wrap: wrap;
 }
 
 .cards {
@@ -365,6 +363,133 @@ button.pinned {
   .cards {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
+
+/* Widget mode */
+body.widget-mode .app-shell {
+  width: 100%;
+  padding: 9px;
+}
+
+body.widget-mode .topbar {
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+body.widget-mode h1 {
+  font-size: 18px;
+}
+
+body.widget-mode .subtitle {
+  font-size: 11px;
+}
+
+body.widget-mode .controls {
+  display: none;
+}
+
+body.widget-mode .top-actions {
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+body.widget-mode .top-actions button {
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+body.widget-mode .status-row {
+  gap: 6px;
+  margin-bottom: 7px;
+  font-size: 11px;
+}
+
+body.widget-mode .cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+body.widget-mode .stock-card {
+  min-height: 132px;
+  border-radius: 8px;
+  padding: 7px;
+  cursor: pointer;
+}
+
+body.widget-mode .symbol {
+  font-size: 14px;
+}
+
+body.widget-mode .name,
+body.widget-mode .change-help,
+body.widget-mode .meta,
+body.widget-mode .drag-handle,
+body.widget-mode .move-btn,
+body.widget-mode .remove-btn {
+  display: none;
+}
+
+body.widget-mode .card-actions {
+  display: none;
+}
+
+body.widget-mode .price-row {
+  margin-top: 6px;
+}
+
+body.widget-mode .price {
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+body.widget-mode .change-row {
+  margin-top: 5px;
+}
+
+body.widget-mode .change-pill {
+  font-size: 10px;
+  padding: 4px 6px;
+}
+
+body.widget-mode .chart-wrap {
+  height: 46px;
+  margin-top: 5px;
+}
+
+body.widget-focus-mode .cards {
+  display: block;
+}
+
+body.widget-focus-mode .stock-card.focused-card {
+  min-height: 535px;
+  padding: 18px;
+  cursor: default;
+}
+
+body.widget-focus-mode .stock-card.focused-card .symbol {
+  font-size: 34px;
+}
+
+body.widget-focus-mode .stock-card.focused-card .name,
+body.widget-focus-mode .stock-card.focused-card .change-help,
+body.widget-focus-mode .stock-card.focused-card .meta {
+  display: block;
+}
+
+body.widget-focus-mode .stock-card.focused-card .price {
+  font-size: 54px;
+}
+
+body.widget-focus-mode .stock-card.focused-card .change-pill {
+  font-size: 15px;
+  padding: 8px 11px;
+}
+
+body.widget-focus-mode .stock-card.focused-card .chart-wrap {
+  height: 310px;
+  margin-top: 18px;
 }
 
 @media (max-width: 980px) {

@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
+    "dist": "electron-builder --win nsis portable",
     "package:win": "electron-builder --win portable",
     "package:mac": "electron-builder --mac dmg",
     "package:linux": "electron-builder --linux AppImage"
