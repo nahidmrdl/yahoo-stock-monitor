@@ -2,10 +2,8 @@
   const {
     cards,
     charts,
-    constants,
     controls,
     dom,
-    modes,
     stockApi,
     storage,
     timers
@@ -15,57 +13,25 @@
     symbols: storage.loadSymbols(),
     chartRange: storage.loadChartRange(),
     refreshIntervalSeconds: storage.loadRefreshIntervalSeconds(),
-    viewMode: storage.loadViewMode(),
-    focusedSymbol: storage.loadFocusedSymbol(),
-    visiblePage: 0,
     paused: false,
     isRefreshing: false
   };
 
-  function ensureValidFocus() {
-    if (state.focusedSymbol && !state.symbols.includes(state.focusedSymbol)) {
-      state.focusedSymbol = storage.saveFocusedSymbol('');
-    }
-  }
-
-  function getTotalPages() {
-    return modes.getTotalWidgetPages(state.symbols);
-  }
-
   function getVisibleSymbols() {
-    if (state.visiblePage >= getTotalPages()) state.visiblePage = 0;
-
-    return modes.getVisibleSymbols({
-      symbols: state.symbols,
-      viewMode: state.viewMode,
-      focusedSymbol: state.focusedSymbol,
-      visiblePage: state.visiblePage
-    });
-  }
-
-  function updateModeUi() {
-    modes.updateModeUi({
-      symbols: state.symbols,
-      viewMode: state.viewMode,
-      focusedSymbol: state.focusedSymbol,
-      visiblePage: state.visiblePage
-    });
+    return state.symbols;
   }
 
   function render() {
-    ensureValidFocus();
-    updateModeUi();
-
     cards.renderCards({
       symbols: state.symbols,
       visibleSymbols: getVisibleSymbols(),
-      viewMode: state.viewMode,
-      focusedSymbol: state.focusedSymbol,
+      viewMode: 'fullscreen',
+      focusedSymbol: '',
       onRemove: removeSymbol,
       onMove: moveSymbol,
       onMoveBefore: moveSymbolBefore,
       onCreateWidget: createTickerWidget,
-      onFocus: focusWidgetSymbol
+      onFocus: () => {}
     });
   }
 
@@ -91,10 +57,6 @@
   function removeSymbol(symbol) {
     state.symbols = state.symbols.filter((item) => item !== symbol);
     cards.removeCachedStock(symbol);
-
-    if (state.focusedSymbol === symbol) {
-      state.focusedSymbol = storage.saveFocusedSymbol('');
-    }
 
     persistSymbols();
     render();
@@ -131,12 +93,6 @@
 
     state.symbols = nextSymbols;
     persistSymbols();
-    render();
-    refreshVisibleCharts();
-  }
-
-  function focusWidgetSymbol(symbol) {
-    state.focusedSymbol = storage.saveFocusedSymbol(symbol);
     render();
     refreshVisibleCharts();
   }
@@ -212,21 +168,6 @@
     });
   }
 
-  function startWidgetCycle() {
-    timers.startWidgetCycle({
-      getState: () => ({
-        viewMode: state.viewMode,
-        focusedSymbol: state.focusedSymbol,
-        totalPages: getTotalPages()
-      }),
-      onCycle: () => {
-        state.visiblePage = (state.visiblePage + 1) % getTotalPages();
-        render();
-        refreshVisibleCharts();
-      }
-    });
-  }
-
   async function refreshQuotes() {
     if (state.isRefreshing || state.paused) return;
 
@@ -283,36 +224,6 @@
     controls.setStatus(`Charts updated for ${state.chartRange.toUpperCase()}.`);
   }
 
-  async function onViewModeToggle() {
-    state.viewMode =
-      state.viewMode === constants.VIEW_MODES.WIDGET
-        ? constants.VIEW_MODES.DASHBOARD
-        : constants.VIEW_MODES.WIDGET;
-
-    if (state.viewMode === constants.VIEW_MODES.DASHBOARD) {
-      state.focusedSymbol = storage.saveFocusedSymbol('');
-      state.visiblePage = 0;
-    }
-
-    state.viewMode = storage.saveViewMode(state.viewMode);
-    updateModeUi();
-
-    await modes.applyWindowPreset({
-      viewMode: state.viewMode,
-      stockApi,
-      onAlwaysOnTopChanged: controls.setPinnedState
-    });
-
-    render();
-    refreshVisibleCharts();
-  }
-
-  function onWidgetBack() {
-    state.focusedSymbol = storage.saveFocusedSymbol('');
-    render();
-    refreshVisibleCharts();
-  }
-
   function onPauseToggle() {
     state.paused = !state.paused;
     scheduleNextRefresh();
@@ -329,24 +240,14 @@
     scheduleNextRefresh();
   }
 
-  async function initWindowState() {
-    try {
-      const windowState = await stockApi.getWindowState();
-      controls.setPinnedState(Boolean(windowState.alwaysOnTop));
-    } catch (_) {}
-  }
-
   function init() {
     controls.initControls({
       state,
       storage,
-      stockApi,
       onAddSymbol: addSymbol,
       onRefreshNow: refreshAll,
       onPauseToggle,
       onRangeChange,
-      onViewModeToggle,
-      onWidgetBack,
       onRefreshIntervalChange,
       onLaunchAtLoginToggle: async (enabled) => {
         const result = await stockApi.setLaunchAtLogin(enabled);
@@ -357,13 +258,6 @@
 
     timers.setRefreshLabels(state.refreshIntervalSeconds, state.paused);
     render();
-    initWindowState();
-    modes.applyWindowPreset({
-      viewMode: state.viewMode,
-      stockApi,
-      onAlwaysOnTopChanged: controls.setPinnedState
-    });
-    startWidgetCycle();
     refreshWidgetList();
     stockApi.onWidgetsChanged(renderWidgetList);
     stockApi.getLaunchAtLogin().then((result) => {

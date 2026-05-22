@@ -19,11 +19,8 @@
         </div>
 
         <div class="top-actions">
-          <button id="viewModeBtn" class="secondary" type="button">Widget mode</button>
-          <button id="widgetBackBtn" class="secondary hidden" type="button">Back to grid</button>
           <button id="refreshNowBtn" class="secondary" type="button">Refresh now</button>
           <button id="pauseBtn" class="secondary" type="button">Pause</button>
-          <button id="alwaysOnTopBtn" class="secondary" type="button">Pin window</button>
         </div>
       </header>
 
@@ -58,6 +55,7 @@
           <button class="range-btn" type="button" data-range="1mo">1M</button>
           <button class="range-btn" type="button" data-range="6mo">6M</button>
           <button class="range-btn" type="button" data-range="1y">1Y</button>
+          <button class="range-btn" type="button" data-range="max">All</button>
         </div>
       </section>
 
@@ -78,7 +76,6 @@
 
       <section class="status-row">
         <span id="statusText">Ready.</span>
-        <span id="widgetPageText" class="hidden"></span>
         <span id="refreshCountdownText">Next refresh in 30s</span>
         <span id="lastUpdated">Not updated yet.</span>
       </section>
@@ -143,7 +140,6 @@
     <script src="ui/charts.js"></script>
     <script src="ui/cards.js"></script>
     <script src="ui/controls.js"></script>
-    <script src="ui/modes.js"></script>
     <script src="ui/timers.js"></script>
     <script src="app.js"></script>
   </body>

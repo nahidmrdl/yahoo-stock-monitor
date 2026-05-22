@@ -19,10 +19,10 @@ const WINDOW_PRESETS = {
 };
 
 const TICKER_WIDGET_PRESET = {
-  width: 220,
-  height: 132,
-  minWidth: 180,
-  minHeight: 110
+  width: 280,
+  height: 210,
+  minWidth: 240,
+  minHeight: 180
 };
 
 function createMainWindow({ store, preloadPath, rendererPath }) {
@@ -30,12 +30,12 @@ function createMainWindow({ store, preloadPath, rendererPath }) {
   const alwaysOnTop = store.get('alwaysOnTop');
 
   const window = new BrowserWindow({
-    width: bounds.width || WINDOW_PRESETS.fullscreen.width,
-    height: bounds.height || WINDOW_PRESETS.fullscreen.height,
+    width: Math.max(bounds.width || 0, WINDOW_PRESETS.fullscreen.width),
+    height: Math.max(bounds.height || 0, WINDOW_PRESETS.fullscreen.height),
     x: bounds.x,
     y: bounds.y,
-    minWidth: 430,
-    minHeight: 520,
+    minWidth: WINDOW_PRESETS.fullscreen.minWidth,
+    minHeight: WINDOW_PRESETS.fullscreen.minHeight,
     backgroundColor: '#101014',
     title: 'Yahoo Stock Monitor',
     alwaysOnTop,
@@ -61,8 +61,8 @@ function createMainWindow({ store, preloadPath, rendererPath }) {
 function createTickerWidgetWindow({ widget, preloadPath, rendererPath }) {
   const bounds = widget.bounds || {};
   const window = new BrowserWindow({
-    width: bounds.width || TICKER_WIDGET_PRESET.width,
-    height: bounds.height || TICKER_WIDGET_PRESET.height,
+    width: Math.max(bounds.width || 0, TICKER_WIDGET_PRESET.width),
+    height: Math.max(bounds.height || 0, TICKER_WIDGET_PRESET.height),
     x: bounds.x,
     y: bounds.y,
     minWidth: TICKER_WIDGET_PRESET.minWidth,

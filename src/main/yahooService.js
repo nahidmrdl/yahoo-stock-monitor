@@ -31,6 +31,8 @@ async function fetchJson(url) {
 
 function rangeToChartParams(range) {
   switch (range) {
+    case 'max':
+      return { range: 'max', interval: '1mo' };
     case '5d':
       return { range: '5d', interval: '15m' };
     case '1mo':

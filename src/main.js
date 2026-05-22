@@ -20,12 +20,13 @@ const store = new Store({
 
 let mainWindow;
 const tickerWidgetWindows = new Map();
+const ALLOWED_WIDGET_RANGES = new Set(['1d', '5d', '1mo', '6mo', '1y', 'max']);
 
 function normalizeTickerWidget(widget) {
   return {
     id: String(widget.id),
     symbol: yahooService.normalizeSymbol(widget.symbol),
-    range: widget.range || '1d',
+    range: ALLOWED_WIDGET_RANGES.has(widget.range) ? widget.range : '1d',
     refreshIntervalSeconds: Number(widget.refreshIntervalSeconds) || 30,
     bounds: widget.bounds || null
   };
@@ -155,8 +156,8 @@ ipcMain.handle('widgets:create', (_event, options = {}) => {
     range: options.range || '1d',
     refreshIntervalSeconds: Number(options.refreshIntervalSeconds) || 30,
     bounds: {
-      width: 220,
-      height: 132,
+      width: windowService.TICKER_WIDGET_PRESET.width,
+      height: windowService.TICKER_WIDGET_PRESET.height,
       x: 80 + offset,
       y: 80 + offset
     }
@@ -198,6 +199,31 @@ ipcMain.handle('widgets:close-current', (event) => {
   widgetWindow.close();
   sendTickerWidgetsToDashboard();
   return { ok: true };
+});
+
+ipcMain.handle('widgets:update-current', (event, updates = {}) => {
+  const widgetWindow = BrowserWindow.fromWebContents(event.sender);
+  if (!widgetWindow) return { ok: false };
+
+  const entry = Array.from(tickerWidgetWindows.entries()).find(([, window]) => window === widgetWindow);
+  if (!entry) return { ok: false };
+
+  const [id] = entry;
+  const widgets = getTickerWidgets();
+  const nextWidgets = widgets.map((widget) =>
+    widget.id === id
+      ? {
+          ...widget,
+          range: ALLOWED_WIDGET_RANGES.has(updates.range) ? updates.range : widget.range,
+          bounds: widgetWindow.getBounds()
+        }
+      : widget
+  );
+
+  saveTickerWidgets(nextWidgets);
+  sendTickerWidgetsToDashboard();
+
+  return { ok: true, widget: nextWidgets.find((widget) => widget.id === id) };
 });
 
 ipcMain.handle('stocks:fetch', async (_event, symbols) => {

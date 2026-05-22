@@ -1,7 +1,7 @@
 (function () {
   const params = new URLSearchParams(window.location.search);
   const symbol = String(params.get('symbol') || '').trim().toUpperCase();
-  const range = params.get('range') || '1d';
+  let range = params.get('range') || '1d';
   const refreshSeconds = Math.min(3600, Math.max(5, Number(params.get('refresh')) || 30));
   const { formatChange, formatPrice, chartLabel } = window.StockMonitor.formatting;
 
@@ -13,6 +13,7 @@
     change: document.querySelector('#widgetChange'),
     countdown: document.querySelector('#widgetCountdown'),
     closeBtn: document.querySelector('#widgetCloseBtn'),
+    rangeButtons: Array.from(document.querySelectorAll('.ticker-widget-ranges button')),
     chart: document.querySelector('#widgetChart')
   };
 
@@ -52,6 +53,13 @@
 
   function setStatus(message) {
     els.status.textContent = message;
+  }
+
+  function setActiveRange(nextRange) {
+    range = nextRange;
+    els.rangeButtons.forEach((button) => {
+      button.classList.toggle('active', button.dataset.range === range);
+    });
   }
 
   function updateQuote(stock) {
@@ -127,8 +135,17 @@
     window.stockApi.closeCurrentWidget();
   });
 
+  els.rangeButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      setActiveRange(button.dataset.range);
+      await window.stockApi.updateCurrentWidget({ range });
+      await refreshChart();
+    });
+  });
+
   els.symbol.textContent = symbol || '----';
   els.countdown.textContent = `Next ${refreshSeconds}s`;
+  setActiveRange(range);
   startCountdown();
   refreshAll();
 })();

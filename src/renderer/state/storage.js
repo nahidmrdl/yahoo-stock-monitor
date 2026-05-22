@@ -53,51 +53,15 @@
     return value;
   }
 
-  function loadViewMode() {
-    const saved = localStorage.getItem(STORAGE_KEYS.VIEW_MODE);
-    return saved === constants.VIEW_MODES.WIDGET
-      ? constants.VIEW_MODES.WIDGET
-      : constants.VIEW_MODES.DASHBOARD;
-  }
-
-  function saveViewMode(viewMode) {
-    const value =
-      viewMode === constants.VIEW_MODES.WIDGET
-        ? constants.VIEW_MODES.WIDGET
-        : constants.VIEW_MODES.DASHBOARD;
-    localStorage.setItem(STORAGE_KEYS.VIEW_MODE, value);
-    return value;
-  }
-
-  function loadFocusedSymbol() {
-    return normalizeSymbol(localStorage.getItem(STORAGE_KEYS.WIDGET_FOCUS) || '');
-  }
-
-  function saveFocusedSymbol(symbol) {
-    const normalized = normalizeSymbol(symbol);
-
-    if (normalized) {
-      localStorage.setItem(STORAGE_KEYS.WIDGET_FOCUS, normalized);
-    } else {
-      localStorage.removeItem(STORAGE_KEYS.WIDGET_FOCUS);
-    }
-
-    return normalized;
-  }
-
   window.StockMonitor.storage = {
     clampRefreshInterval,
     loadChartRange,
-    loadFocusedSymbol,
     loadRefreshIntervalSeconds,
     loadSymbols,
-    loadViewMode,
     normalizeSymbol,
     normalizeSymbols,
     saveChartRange,
-    saveFocusedSymbol,
     saveRefreshIntervalSeconds,
-    saveSymbols,
-    saveViewMode
+    saveSymbols
   };
 })();

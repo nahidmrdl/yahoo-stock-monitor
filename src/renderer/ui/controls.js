@@ -5,21 +5,13 @@
     els.statusText.textContent = message;
   }
 
-  function setPinnedState(isPinned) {
-    els.alwaysOnTopBtn.classList.toggle('pinned', Boolean(isPinned));
-    els.alwaysOnTopBtn.textContent = isPinned ? 'Pinned' : 'Pin window';
-  }
-
   function initControls({
     state,
     storage,
-    stockApi,
     onAddSymbol,
     onRefreshNow,
     onPauseToggle,
     onRangeChange,
-    onViewModeToggle,
-    onWidgetBack,
     onRefreshIntervalChange,
     onLaunchAtLoginToggle
   }) {
@@ -55,17 +47,9 @@
 
     els.refreshNowBtn.addEventListener('click', onRefreshNow);
     els.pauseBtn.addEventListener('click', onPauseToggle);
-    els.viewModeBtn.addEventListener('click', onViewModeToggle);
-    els.widgetBackBtn.addEventListener('click', onWidgetBack);
 
     els.launchAtLoginToggle.addEventListener('change', () => {
       onLaunchAtLoginToggle(els.launchAtLoginToggle.checked);
-    });
-
-    els.alwaysOnTopBtn.addEventListener('click', async () => {
-      const currentlyPinned = els.alwaysOnTopBtn.classList.contains('pinned');
-      const result = await stockApi.setAlwaysOnTop(!currentlyPinned);
-      setPinnedState(Boolean(result.alwaysOnTop));
     });
 
     $$('.link-btn[data-demo]').forEach((btn) => {
@@ -75,7 +59,6 @@
 
   window.StockMonitor.controls = {
     initControls,
-    setPinnedState,
     setStatus
   };
 })();

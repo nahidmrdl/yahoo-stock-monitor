@@ -441,137 +441,6 @@ button.pinned {
   }
 }
 
-/* Widget mode */
-body.widget-mode .app-shell {
-  width: 100%;
-  padding: 9px;
-}
-
-body.widget-mode .topbar {
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 7px;
-}
-
-body.widget-mode h1 {
-  font-size: 18px;
-}
-
-body.widget-mode .subtitle {
-  font-size: 11px;
-}
-
-body.widget-mode .controls {
-  display: none;
-}
-
-body.widget-mode .widget-manager {
-  display: none;
-}
-
-body.widget-mode .top-actions {
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: flex-end;
-}
-
-body.widget-mode .top-actions button {
-  padding: 6px 8px;
-  font-size: 11px;
-}
-
-body.widget-mode .status-row {
-  gap: 6px;
-  margin-bottom: 7px;
-  font-size: 11px;
-}
-
-body.widget-mode .cards {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-}
-
-body.widget-mode .stock-card {
-  min-height: 132px;
-  border-radius: 8px;
-  padding: 7px;
-  cursor: pointer;
-}
-
-body.widget-mode .symbol {
-  font-size: 14px;
-}
-
-body.widget-mode .name,
-body.widget-mode .change-help,
-body.widget-mode .meta,
-body.widget-mode .drag-handle,
-body.widget-mode .move-btn,
-body.widget-mode .remove-btn {
-  display: none;
-}
-
-body.widget-mode .card-actions {
-  display: none;
-}
-
-body.widget-mode .price-row {
-  margin-top: 6px;
-}
-
-body.widget-mode .price {
-  font-size: 18px;
-  letter-spacing: 0;
-}
-
-body.widget-mode .change-row {
-  margin-top: 5px;
-}
-
-body.widget-mode .change-pill {
-  font-size: 10px;
-  padding: 4px 6px;
-}
-
-body.widget-mode .chart-wrap {
-  height: 46px;
-  margin-top: 5px;
-}
-
-body.widget-focus-mode .cards {
-  display: block;
-}
-
-body.widget-focus-mode .stock-card.focused-card {
-  min-height: 535px;
-  padding: 18px;
-  cursor: default;
-}
-
-body.widget-focus-mode .stock-card.focused-card .symbol {
-  font-size: 34px;
-}
-
-body.widget-focus-mode .stock-card.focused-card .name,
-body.widget-focus-mode .stock-card.focused-card .change-help,
-body.widget-focus-mode .stock-card.focused-card .meta {
-  display: block;
-}
-
-body.widget-focus-mode .stock-card.focused-card .price {
-  font-size: 54px;
-}
-
-body.widget-focus-mode .stock-card.focused-card .change-pill {
-  font-size: 15px;
-  padding: 8px 11px;
-}
-
-body.widget-focus-mode .stock-card.focused-card .chart-wrap {
-  height: 310px;
-  margin-top: 18px;
-}
-
 body.ticker-widget-window {
   min-height: 100vh;
   overflow: hidden;
@@ -586,7 +455,7 @@ body.ticker-widget-window {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
-  padding: 9px;
+  padding: 10px;
   background: rgba(16, 16, 20, 0.86);
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
   backdrop-filter: blur(18px);
@@ -628,7 +497,7 @@ body.ticker-widget-window {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  margin-top: 8px;
+  margin-top: 9px;
 }
 
 #widgetPrice {
@@ -651,6 +520,29 @@ body.ticker-widget-window {
   font-weight: 800;
 }
 
+.ticker-widget-ranges {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.ticker-widget-ranges button {
+  min-width: 0;
+  border-radius: 7px;
+  padding: 4px 0;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.ticker-widget-ranges button.active {
+  color: #101014;
+  background: var(--yellow);
+}
+
 #widgetChange {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -664,9 +556,9 @@ body.ticker-widget-window {
 }
 
 .ticker-widget-chart {
-  height: calc(100vh - 86px);
-  min-height: 24px;
-  margin-top: 3px;
+  height: calc(100vh - 120px);
+  min-height: 56px;
+  margin-top: 6px;
 }
 
 @media (max-width: 980px) {

@@ -41,6 +41,9 @@
     closeCurrentWidget() {
       return getApi().closeCurrentWidget();
     },
+    updateCurrentWidget(updates) {
+      return getApi().updateCurrentWidget(updates);
+    },
     onWidgetsChanged(callback) {
       return getApi().onWidgetsChanged(callback);
     }

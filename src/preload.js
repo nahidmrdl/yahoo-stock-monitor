@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-const allowedRanges = new Set(['1d', '5d', '1mo', '6mo', '1y']);
+const allowedRanges = new Set(['1d', '5d', '1mo', '6mo', '1y', 'max']);
 const allowedPresets = new Set(['fullscreen', 'widget']);
 
 function normalizeSymbols(symbols) {
@@ -32,6 +32,10 @@ contextBridge.exposeInMainWorld('stockApi', {
     }),
   closeWidget: (id) => ipcRenderer.invoke('widgets:close', String(id || '')),
   closeCurrentWidget: () => ipcRenderer.invoke('widgets:close-current'),
+  updateCurrentWidget: (updates) =>
+    ipcRenderer.invoke('widgets:update-current', {
+      range: allowedRanges.has(updates?.range) ? updates.range : undefined
+    }),
   onWidgetsChanged: (callback) => {
     if (typeof callback !== 'function') return () => {};
     const listener = (_event, widgets) => callback(widgets);
