@@ -82,12 +82,17 @@ jobs:
             "- Use Windows Apps & Features or the included uninstaller to remove the app."
           )
 
-          $body = @(
-            "## Changes",
-            "",
-            $sentences,
-            $install
-          ) -join "`n"
+          $bodyLines = New-Object System.Collections.Generic.List[string]
+          $bodyLines.Add("## Changes")
+          $bodyLines.Add("")
+          foreach ($sentence in $sentences) {
+            $bodyLines.Add($sentence)
+          }
+          foreach ($line in $install) {
+            $bodyLines.Add($line)
+          }
+
+          $body = $bodyLines -join "`n"
 
           $bodyPath = Join-Path $env:RUNNER_TEMP "release-notes.md"
           $body | Set-Content -Path $bodyPath -Encoding UTF8
