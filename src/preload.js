@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('stockApi', {
     const cleanPreset = allowedPresets.has(preset) ? preset : 'fullscreen';
     return ipcRenderer.invoke('app:set-window-preset', cleanPreset);
   },
+  getAppInfo: () => ipcRenderer.invoke('app:get-info'),
   openDashboard: () => ipcRenderer.invoke('app:open-dashboard'),
   getLaunchAtLogin: () => ipcRenderer.invoke('app:get-launch-at-login'),
   setLaunchAtLogin: (enabled) => ipcRenderer.invoke('app:set-launch-at-login', Boolean(enabled)),
@@ -28,7 +29,7 @@ contextBridge.exposeInMainWorld('stockApi', {
   createWidget: (options) =>
     ipcRenderer.invoke('widgets:create', {
       symbol: String(options?.symbol || '').trim().toUpperCase(),
-      range: allowedRanges.has(options?.range) ? options.range : '1d',
+      range: allowedRanges.has(options?.range) ? options.range : '1mo',
       refreshIntervalSeconds: Number(options?.refreshIntervalSeconds) || 30
     }),
   closeWidget: (id) => ipcRenderer.invoke('widgets:close', String(id || '')),

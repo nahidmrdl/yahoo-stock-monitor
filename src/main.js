@@ -21,12 +21,17 @@ const store = new Store({
 let mainWindow;
 const tickerWidgetWindows = new Map();
 const ALLOWED_WIDGET_RANGES = new Set(['1d', '5d', '1mo', '6mo', '1y', 'max']);
+const APP_ID = 'com.local.yahoostockmonitor';
+const DEFAULT_WIDGET_RANGE = '1mo';
+
+app.setName('Yahoo Stock Monitor');
+app.setAppUserModelId(APP_ID);
 
 function normalizeTickerWidget(widget) {
   return {
     id: String(widget.id),
     symbol: yahooService.normalizeSymbol(widget.symbol),
-    range: ALLOWED_WIDGET_RANGES.has(widget.range) ? widget.range : '1d',
+    range: ALLOWED_WIDGET_RANGES.has(widget.range) ? widget.range : DEFAULT_WIDGET_RANGE,
     refreshIntervalSeconds: Number(widget.refreshIntervalSeconds) || 30,
     alwaysOnTop: Boolean(widget.alwaysOnTop),
     bounds: widget.bounds || null
@@ -174,6 +179,13 @@ ipcMain.handle('app:get-window-state', () => {
   return windowService.getWindowState(mainWindow);
 });
 
+ipcMain.handle('app:get-info', () => {
+  return {
+    name: app.getName(),
+    version: app.getVersion()
+  };
+});
+
 ipcMain.handle('app:set-always-on-top', (_event, enabled) => {
   return windowService.setAlwaysOnTop(mainWindow, store, enabled);
 });
@@ -211,7 +223,7 @@ ipcMain.handle('widgets:create', (_event, options = {}) => {
   const widget = {
     id,
     symbol,
-    range: options.range || '1d',
+    range: ALLOWED_WIDGET_RANGES.has(options.range) ? options.range : DEFAULT_WIDGET_RANGE,
     refreshIntervalSeconds: Number(options.refreshIntervalSeconds) || 30,
     alwaysOnTop: false,
     bounds: {

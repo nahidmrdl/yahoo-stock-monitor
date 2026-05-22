@@ -151,7 +151,7 @@
   async function createTickerWidget(symbol) {
     const result = await stockApi.createWidget({
       symbol,
-      range: state.chartRange,
+      range: '1mo',
       refreshIntervalSeconds: state.refreshIntervalSeconds
     });
 
@@ -271,6 +271,9 @@
     stockApi.onWidgetsChanged(renderWidgetList);
     stockApi.getLaunchAtLogin().then((result) => {
       dom.els.launchAtLoginToggle.checked = Boolean(result.enabled);
+    });
+    stockApi.getAppInfo().then((info) => {
+      dom.els.appVersionLabel.textContent = info?.version || '-';
     });
     window.addEventListener('beforeunload', stopDashboardRefresh);
     refreshAll();

@@ -1,6 +1,8 @@
 const path = require('path');
 const { BrowserWindow } = require('electron');
 
+const APP_ICON_PATH = path.join(__dirname, '..', '..', 'public', 'app.ico');
+
 const WINDOW_PRESETS = {
   fullscreen: {
     width: 1180,
@@ -38,6 +40,7 @@ function createMainWindow({ store, preloadPath, rendererPath }) {
     minHeight: WINDOW_PRESETS.fullscreen.minHeight,
     backgroundColor: '#101014',
     title: 'Yahoo Stock Monitor',
+    icon: APP_ICON_PATH,
     alwaysOnTop,
     autoHideMenuBar: true,
     webPreferences: {
@@ -76,6 +79,7 @@ function createTickerWidgetWindow({ widget, preloadPath, rendererPath }) {
     hasShadow: false,
     backgroundColor: '#00000000',
     title: `${widget.symbol} Widget`,
+    icon: APP_ICON_PATH,
     autoHideMenuBar: true,
     webPreferences: {
       preload: preloadPath,
@@ -91,7 +95,7 @@ function createTickerWidgetWindow({ widget, preloadPath, rendererPath }) {
     query: {
       id: widget.id,
       symbol: widget.symbol,
-      range: widget.range || '1d',
+      range: widget.range || '1mo',
       refresh: String(widget.refreshIntervalSeconds || 30)
     }
   });

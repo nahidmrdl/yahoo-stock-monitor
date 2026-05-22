@@ -1,7 +1,8 @@
 {
   "name": "yahoo-stock-monitor",
   "version": "1.0.2",
-  "description": "A small free desktop stock monitor using Yahoo Finance public endpoints.",
+  "description": "Yahoo Stock Monitor",
+  "author": "nahidmrdl",
   "main": "src/main.js",
   "private": true,
   "scripts": {
@@ -25,6 +26,7 @@
     "productName": "Yahoo Stock Monitor",
     "files": [
       "src/**/*",
+      "public/**/*",
       "package.json"
     ],
     "directories": {
@@ -34,9 +36,12 @@
       "target": [
         "nsis"
       ],
+      "icon": "public/app.ico",
       "artifactName": "Yahoo-Stock-Monitor-Setup-${version}.${ext}"
     },
     "nsis": {
+      "installerIcon": "public/app.ico",
+      "uninstallerIcon": "public/app.ico",
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,

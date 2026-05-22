@@ -1,7 +1,7 @@
 (function () {
   const params = new URLSearchParams(window.location.search);
   const symbol = String(params.get('symbol') || '').trim().toUpperCase();
-  let range = params.get('range') || '1d';
+  let range = params.get('range') || '1mo';
   const refreshSeconds = Math.min(3600, Math.max(5, Number(params.get('refresh')) || 30));
   const { formatChange, formatPrice, chartLabel } = window.StockMonitor.formatting;
 

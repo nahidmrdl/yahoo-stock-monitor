@@ -44,11 +44,11 @@
 
   function loadChartRange() {
     const saved = localStorage.getItem(STORAGE_KEYS.RANGE);
-    return constants.CHART_RANGES.includes(saved) ? saved : '1d';
+    return constants.CHART_RANGES.includes(saved) ? saved : '1mo';
   }
 
   function saveChartRange(range) {
-    const value = constants.CHART_RANGES.includes(range) ? range : '1d';
+    const value = constants.CHART_RANGES.includes(range) ? range : '1mo';
     localStorage.setItem(STORAGE_KEYS.RANGE, value);
     return value;
   }
