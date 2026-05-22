@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('stockApi', {
     const cleanPreset = allowedPresets.has(preset) ? preset : 'fullscreen';
     return ipcRenderer.invoke('app:set-window-preset', cleanPreset);
   },
+  openDashboard: () => ipcRenderer.invoke('app:open-dashboard'),
   getLaunchAtLogin: () => ipcRenderer.invoke('app:get-launch-at-login'),
   setLaunchAtLogin: (enabled) => ipcRenderer.invoke('app:set-launch-at-login', Boolean(enabled)),
   listWidgets: () => ipcRenderer.invoke('widgets:list'),

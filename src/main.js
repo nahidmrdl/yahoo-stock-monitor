@@ -19,6 +19,7 @@ const store = new Store({
 });
 
 let mainWindow;
+let isQuitting = false;
 const tickerWidgetWindows = new Map();
 const ALLOWED_WIDGET_RANGES = new Set(['1d', '5d', '1mo', '6mo', '1y', 'max']);
 
@@ -47,6 +48,15 @@ function sendTickerWidgetsToDashboard() {
   mainWindow.webContents.send('widgets:changed', getTickerWidgets());
 }
 
+function quitIfNoVisibleWindows() {
+  const hasDashboard = mainWindow && !mainWindow.isDestroyed();
+  const hasWidgets = Array.from(tickerWidgetWindows.values()).some((window) => !window.isDestroyed());
+
+  if (!hasDashboard && !hasWidgets) {
+    app.quit();
+  }
+}
+
 function createWindow() {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.show();
@@ -55,9 +65,17 @@ function createWindow() {
   }
 
   mainWindow = windowService.createWindow(store);
+  mainWindow.on('close', () => {
+    if (!isQuitting) app.quit();
+  });
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+}
+
+function removeTickerWidget(widgetId) {
+  saveTickerWidgets(getTickerWidgets().filter((widget) => widget.id !== widgetId));
+  sendTickerWidgetsToDashboard();
 }
 
 function createTickerWidgetWindow(widget) {
@@ -84,6 +102,23 @@ function createTickerWidgetWindow(widget) {
   widgetWindow.on('resized', persistBounds);
   widgetWindow.on('closed', () => {
     tickerWidgetWindows.delete(widget.id);
+    quitIfNoVisibleWindows();
+  });
+
+  widgetWindow.webContents.on('context-menu', () => {
+    Menu.buildFromTemplate([
+      {
+        label: 'Open Dashboard',
+        click: () => createWindow()
+      },
+      {
+        label: 'Close Widget',
+        click: () => {
+          removeTickerWidget(widget.id);
+          if (!widgetWindow.isDestroyed()) widgetWindow.close();
+        }
+      }
+    ]).popup({ window: widgetWindow });
   });
 
   return widgetWindow;
@@ -106,6 +141,10 @@ app.whenReady().then(() => {
 
 app.on('second-instance', () => {
   createWindow();
+});
+
+app.on('before-quit', () => {
+  isQuitting = true;
 });
 
 app.on('window-all-closed', () => {
@@ -176,12 +215,12 @@ ipcMain.handle('widgets:close', (_event, id) => {
   const widgetId = String(id || '');
   const widgetWindow = tickerWidgetWindows.get(widgetId);
 
+  removeTickerWidget(widgetId);
+
   if (widgetWindow && !widgetWindow.isDestroyed()) {
     widgetWindow.close();
   }
 
-  saveTickerWidgets(getTickerWidgets().filter((widget) => widget.id !== widgetId));
-  sendTickerWidgetsToDashboard();
   return { ok: true, widgets: getTickerWidgets() };
 });
 
@@ -192,12 +231,17 @@ ipcMain.handle('widgets:close-current', (event) => {
   const entry = Array.from(tickerWidgetWindows.entries()).find(([, window]) => window === widgetWindow);
   if (entry) {
     const [id] = entry;
-    saveTickerWidgets(getTickerWidgets().filter((widget) => widget.id !== id));
+    removeTickerWidget(id);
     tickerWidgetWindows.delete(id);
   }
 
   widgetWindow.close();
   sendTickerWidgetsToDashboard();
+  return { ok: true };
+});
+
+ipcMain.handle('app:open-dashboard', () => {
+  createWindow();
   return { ok: true };
 });
 

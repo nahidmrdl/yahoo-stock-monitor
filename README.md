@@ -1,6 +1,6 @@
 # Yahoo Stock Monitor
 
-A small free desktop stock monitor for a second monitor.
+A small Windows-friendly Electron stock monitor with a dashboard for managing tickers and persistent desktop ticker widgets.
 
 ## Run
 
@@ -12,12 +12,26 @@ npm start
 ## Features
 
 - Add/remove tickers
-- Auto-refresh quotes every 30 seconds
+- Auto-refresh quotes on the dashboard while the dashboard is open
 - Mini charts from Yahoo Finance public chart endpoint
-- Ranges: 1D, 5D, 1M, 6M, 1Y
+- Dashboard ranges: 1D, 5D, 1M, 6M, 1Y, All
 - Saved watchlist in local storage
-- Always-on-top / pinned window mode
+- Create up to 15 always-on-top desktop widgets
+- Widget positions, sizes, chart ranges, and symbols are saved
+- Widget ranges: 1D, 1W, 1M, 6M, 1Y, All
+- Hoverable widget charts
+- Right-click a widget to open the dashboard or close that widget
+- Start with Windows support so saved widgets can return after restart
+- Closing the dashboard exits the app; closing the last widget also exits the app
 
 ## Notes
 
 This app uses Yahoo Finance public endpoints directly. It is free for personal use but unofficial, so Yahoo can change or rate-limit it at any time.
+
+## Build
+
+```bash
+npm run dist
+```
+
+The project is configured with `electron-builder` for Windows release packaging.
