@@ -101,28 +101,12 @@ jobs:
       - name: Generate uninstaller exe
         shell: pwsh
         run: |
-          $setupPath = Join-Path "dist" "${{ steps.release.outputs.setup_name }}"
-          if (!(Test-Path -LiteralPath $setupPath)) {
-            throw "Setup exe not found: $setupPath"
-          }
-
-          $installDir = Join-Path $env:RUNNER_TEMP "YahooStockMonitorInstall"
-          New-Item -ItemType Directory -Force -Path $installDir | Out-Null
-
-          $process = Start-Process -FilePath (Resolve-Path -LiteralPath $setupPath) `
-            -ArgumentList @("/S", "/D=$installDir") `
-            -PassThru `
-            -Wait
-
-          if ($process.ExitCode -ne 0) {
-            throw "Silent installer exited with code $($process.ExitCode)"
-          }
-
-          $uninstaller = Get-ChildItem -LiteralPath $installDir -Filter "Uninstall*.exe" -Recurse |
+          $uninstaller = Get-ChildItem -LiteralPath "dist" -Filter "__uninstaller-nsis-*.exe" |
+            Sort-Object LastWriteTime -Descending |
             Select-Object -First 1
 
           if (!$uninstaller) {
-            throw "Could not find generated uninstaller under $installDir"
+            throw "Could not find electron-builder NSIS uninstaller artifact in dist"
           }
 
           Copy-Item -LiteralPath $uninstaller.FullName -Destination (Join-Path "dist" "${{ steps.release.outputs.uninstaller_name }}") -Force
