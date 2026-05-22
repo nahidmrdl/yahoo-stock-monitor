@@ -101,15 +101,55 @@ jobs:
       - name: Generate uninstaller exe
         shell: pwsh
         run: |
-          $uninstaller = Get-ChildItem -LiteralPath "dist" -Filter "__uninstaller-nsis-*.exe" |
-            Sort-Object LastWriteTime -Descending |
-            Select-Object -First 1
-
-          if (!$uninstaller) {
-            throw "Could not find electron-builder NSIS uninstaller artifact in dist"
+          if (!(Get-Command makensis.exe -ErrorAction SilentlyContinue)) {
+            choco install nsis -y --no-progress
           }
 
-          Copy-Item -LiteralPath $uninstaller.FullName -Destination (Join-Path "dist" "${{ steps.release.outputs.uninstaller_name }}") -Force
+          $outFile = (Resolve-Path -LiteralPath "dist").Path + "\${{ steps.release.outputs.uninstaller_name }}"
+          $scriptPath = Join-Path $env:RUNNER_TEMP "standalone-uninstaller.nsi"
+          $iconPath = (Resolve-Path -LiteralPath "public/app.ico").Path
+
+          $script = @"
+          Unicode true
+          RequestExecutionLevel user
+          Name "Yahoo Stock Monitor"
+          OutFile "$outFile"
+          Icon "$iconPath"
+          UninstallIcon "$iconPath"
+          ShowInstDetails show
+
+          Section "Uninstall"
+            DetailPrint "Closing Yahoo Stock Monitor..."
+            ExecWait 'taskkill /IM "Yahoo Stock Monitor.exe" /F'
+
+            DetailPrint "Removing shortcuts..."
+            Delete "$DESKTOP\Yahoo Stock Monitor.lnk"
+            Delete "$SMPROGRAMS\Yahoo Stock Monitor.lnk"
+            RMDir /r "$SMPROGRAMS\Yahoo Stock Monitor"
+
+            DetailPrint "Removing installed files..."
+            RMDir /r "$LOCALAPPDATA\Programs\Yahoo Stock Monitor"
+            RMDir /r "$LOCALAPPDATA\Programs\yahoo-stock-monitor"
+
+            DetailPrint "Removing saved app data..."
+            RMDir /r "$APPDATA\Yahoo Stock Monitor"
+            RMDir /r "$APPDATA\yahoo-stock-monitor"
+            RMDir /r "$LOCALAPPDATA\Yahoo Stock Monitor"
+            RMDir /r "$LOCALAPPDATA\yahoo-stock-monitor"
+
+            DetailPrint "Removing uninstall registry entries..."
+            DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\com.local.yahoostockmonitor"
+            DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yahoo Stock Monitor"
+            DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\yahoo-stock-monitor"
+          SectionEnd
+          "@
+
+          $script | Set-Content -Path $scriptPath -Encoding UTF8
+          makensis.exe $scriptPath
+
+          if (!(Test-Path -LiteralPath $outFile)) {
+            throw "Failed to generate standalone uninstaller: $outFile"
+          }
 
       - name: Verify release filenames
         shell: pwsh
