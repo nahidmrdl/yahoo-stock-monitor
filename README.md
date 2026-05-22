@@ -23,6 +23,7 @@ npm start
 - Right-click a widget to open the dashboard, close that widget, or toggle always-on-top for that widget
 - Start with Windows support so saved widgets can return after restart
 - Closing the dashboard exits the app; closing the last widget also exits the app
+- Uninstall removes saved app data, including local watchlists, widgets, and preferences
 
 ## Notes
 
