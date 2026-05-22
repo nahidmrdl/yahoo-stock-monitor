@@ -35,3 +35,19 @@ npm run dist
 ```
 
 The project is configured with `electron-builder` for Windows release packaging.
+
+## Windows Release Workflow
+
+Use the `Windows Release` GitHub Actions workflow to create a release build.
+
+The workflow asks for:
+
+- `version`: the release version, such as `1.2.3` or `v1.2.3`
+- `release_notes`: dot-separated release note sentences
+
+It creates a GitHub release tagged as `v<version>` and uploads:
+
+- `Yahoo-Stock-Monitor-Setup-<version>.exe`
+- `Yahoo-Stock-Monitor-Uninstaller-<version>.exe`
+
+The setup installer can install the app for new users or update an existing installation in place.

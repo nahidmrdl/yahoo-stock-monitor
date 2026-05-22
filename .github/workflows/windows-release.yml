@@ -1,0 +1,171 @@
+name: Windows Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version/tag, for example 1.2.3 or v1.2.3"
+        required: true
+        type: string
+      release_notes:
+        description: "Release notes as dot-separated sentences"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build Windows installer
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Normalize release inputs
+        id: release
+        shell: pwsh
+        run: |
+          $rawVersion = "${{ inputs.version }}".Trim()
+          $version = $rawVersion -replace '^v', ''
+
+          if ($version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') {
+            throw "Version must look like 1.2.3 or v1.2.3. Received: $rawVersion"
+          }
+
+          $tag = "v$version"
+          $setupName = "Yahoo-Stock-Monitor-Setup-$version.exe"
+          $uninstallerName = "Yahoo-Stock-Monitor-Uninstaller-$version.exe"
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "setup_name=$setupName" >> $env:GITHUB_OUTPUT
+          "uninstaller_name=$uninstallerName" >> $env:GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply release version
+        run: npm version ${{ steps.release.outputs.version }} --no-git-tag-version --allow-same-version
+
+      - name: Build setup exe
+        run: npm run dist
+
+      - name: Prepare release notes
+        id: notes
+        shell: pwsh
+        run: |
+          $rawNotes = @'
+          ${{ inputs.release_notes }}
+          '@
+
+          $sentences = $rawNotes -split '\.' |
+            ForEach-Object { $_.Trim() } |
+            Where-Object { $_.Length -gt 0 } |
+            ForEach-Object { "- $_" }
+
+          $install = @(
+            "",
+            "## Installation",
+            "",
+            "- Download `Yahoo-Stock-Monitor-Setup-${{ steps.release.outputs.version }}.exe`.",
+            "- Run the setup file and follow the installer prompts.",
+            "- Existing installations are updated in place by the setup installer.",
+            "- Use Windows Apps & Features or the included uninstaller to remove the app."
+          )
+
+          $body = @(
+            "## Changes",
+            "",
+            $sentences,
+            $install
+          ) -join "`n"
+
+          $bodyPath = Join-Path $env:RUNNER_TEMP "release-notes.md"
+          $body | Set-Content -Path $bodyPath -Encoding UTF8
+          "body_path=$bodyPath" >> $env:GITHUB_OUTPUT
+
+      - name: Generate uninstaller exe
+        shell: pwsh
+        run: |
+          $setupPath = Join-Path "dist" "${{ steps.release.outputs.setup_name }}"
+          if (!(Test-Path -LiteralPath $setupPath)) {
+            throw "Setup exe not found: $setupPath"
+          }
+
+          $installDir = Join-Path $env:RUNNER_TEMP "YahooStockMonitorInstall"
+          New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+
+          $process = Start-Process -FilePath (Resolve-Path -LiteralPath $setupPath) `
+            -ArgumentList @("/S", "/D=$installDir") `
+            -PassThru `
+            -Wait
+
+          if ($process.ExitCode -ne 0) {
+            throw "Silent installer exited with code $($process.ExitCode)"
+          }
+
+          $uninstaller = Get-ChildItem -LiteralPath $installDir -Filter "Uninstall*.exe" -Recurse |
+            Select-Object -First 1
+
+          if (!$uninstaller) {
+            throw "Could not find generated uninstaller under $installDir"
+          }
+
+          Copy-Item -LiteralPath $uninstaller.FullName -Destination (Join-Path "dist" "${{ steps.release.outputs.uninstaller_name }}") -Force
+
+      - name: Verify release filenames
+        shell: pwsh
+        run: |
+          $expected = @(
+            "dist/${{ steps.release.outputs.setup_name }}",
+            "dist/${{ steps.release.outputs.uninstaller_name }}"
+          )
+
+          foreach ($file in $expected) {
+            if (!(Test-Path -LiteralPath $file)) {
+              throw "Missing release file: $file"
+            }
+          }
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: yahoo-stock-monitor-windows-${{ steps.release.outputs.version }}
+          path: |
+            dist/${{ steps.release.outputs.setup_name }}
+            dist/${{ steps.release.outputs.uninstaller_name }}
+
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ steps.release.outputs.tag }}"
+          $title = "Yahoo Stock Monitor ${{ steps.release.outputs.version }}"
+          $bodyPath = "${{ steps.notes.outputs.body_path }}"
+          $setupPath = "dist/${{ steps.release.outputs.setup_name }}"
+          $uninstallerPath = "dist/${{ steps.release.outputs.uninstaller_name }}"
+
+          $releaseExists = $false
+          try {
+            gh release view $tag *> $null
+            $releaseExists = $LASTEXITCODE -eq 0
+          } catch {
+            $releaseExists = $false
+          }
+
+          if ($releaseExists) {
+            gh release edit $tag --title $title --notes-file $bodyPath
+            gh release upload $tag $setupPath $uninstallerPath --clobber
+          } else {
+            gh release create $tag $setupPath $uninstallerPath --title $title --notes-file $bodyPath
+          }

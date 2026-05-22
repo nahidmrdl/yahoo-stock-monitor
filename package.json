@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
-    "dist": "electron-builder --win nsis portable",
+    "dist": "electron-builder --win nsis",
     "package:win": "electron-builder --win portable",
     "package:mac": "electron-builder --mac dmg",
     "package:linux": "electron-builder --linux AppImage"
@@ -29,6 +29,21 @@
     ],
     "directories": {
       "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "Yahoo-Stock-Monitor-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Yahoo Stock Monitor",
+      "uninstallDisplayName": "Yahoo Stock Monitor"
     }
   }
 }
