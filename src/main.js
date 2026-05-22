@@ -2,7 +2,6 @@ const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const Store = require('electron-store');
 const yahooService = require('./main/yahooService');
 const windowService = require('./main/windowService');
-const packageInfo = require('../package.json');
 
 const gotSingleInstanceLock = app.requestSingleInstanceLock();
 
@@ -186,13 +185,6 @@ app.on('window-all-closed', () => {
 
 ipcMain.handle('app:get-window-state', () => {
   return windowService.getWindowState(mainWindow);
-});
-
-ipcMain.handle('app:get-info', () => {
-  return {
-    name: app.getName(),
-    version: app.getVersion() || packageInfo.version
-  };
 });
 
 ipcMain.handle('app:set-always-on-top', (_event, enabled) => {

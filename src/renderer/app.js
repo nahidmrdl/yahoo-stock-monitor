@@ -274,11 +274,6 @@
     stockApi.getLaunchAtLogin().then((result) => {
       dom.els.launchAtLoginToggle.checked = Boolean(result.enabled);
     });
-    stockApi.getAppInfo().then((info) => {
-      dom.els.appVersionLabel.textContent = info?.version || 'unknown';
-    }).catch(() => {
-      dom.els.appVersionLabel.textContent = 'unknown';
-    });
     window.addEventListener('beforeunload', stopDashboardRefresh);
     requestAnimationFrame(() => {
       refreshAll();

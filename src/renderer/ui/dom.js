@@ -20,7 +20,6 @@
       widgetList: $('#widgetList'),
       widgetCount: $('#widgetCount'),
       refreshIntervalLabel: $('#refreshIntervalLabel'),
-      appVersionLabel: $('#appVersionLabel'),
       template: $('#stockCardTemplate')
     },
     $,
