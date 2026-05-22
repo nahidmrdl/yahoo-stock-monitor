@@ -17,6 +17,15 @@
     isRefreshing: false
   };
 
+  function stopDashboardRefresh() {
+    state.paused = true;
+    timers.scheduleRefresh({
+      seconds: state.refreshIntervalSeconds,
+      paused: true,
+      onRefresh: () => {}
+    });
+  }
+
   function getVisibleSymbols() {
     return state.symbols;
   }
@@ -263,6 +272,7 @@
     stockApi.getLaunchAtLogin().then((result) => {
       dom.els.launchAtLoginToggle.checked = Boolean(result.enabled);
     });
+    window.addEventListener('beforeunload', stopDashboardRefresh);
     refreshAll();
   }
 

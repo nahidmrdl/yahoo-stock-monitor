@@ -20,9 +20,9 @@ const WINDOW_PRESETS = {
 
 const TICKER_WIDGET_PRESET = {
   width: 280,
-  height: 210,
+  height: 240,
   minWidth: 240,
-  minHeight: 180
+  minHeight: 215
 };
 
 function createMainWindow({ store, preloadPath, rendererPath }) {

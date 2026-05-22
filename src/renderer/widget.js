@@ -30,6 +30,8 @@
           data: [],
           borderWidth: 2,
           pointRadius: 0,
+          pointHoverRadius: 3,
+          pointHitRadius: 14,
           tension: 0.35,
           fill: true,
           backgroundColor: 'rgba(53, 208, 127, 0.12)'
@@ -39,10 +41,21 @@
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
       animation: false,
       plugins: {
         legend: { display: false },
-        tooltip: { enabled: false }
+        tooltip: {
+          enabled: true,
+          displayColors: false,
+          callbacks: {
+            title: (items) => items?.[0]?.label || '',
+            label: (item) => formatPrice(item.parsed.y)
+          }
+        }
       },
       scales: {
         x: { display: false },
@@ -93,6 +106,9 @@
     const points = result.points || [];
     chart.data.labels = points.map((point) => chartLabel(point, range));
     chart.data.datasets[0].data = points.map((point) => point.close);
+    chart.options.scales.x.ticks = {
+      maxTicksLimit: range === '1d' || range === '5d' ? 5 : 4
+    };
 
     const first = points[0]?.close;
     const last = points[points.length - 1]?.close;
