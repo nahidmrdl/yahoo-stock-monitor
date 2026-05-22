@@ -35,7 +35,8 @@ contextBridge.exposeInMainWorld('stockApi', {
   closeCurrentWidget: () => ipcRenderer.invoke('widgets:close-current'),
   updateCurrentWidget: (updates) =>
     ipcRenderer.invoke('widgets:update-current', {
-      range: allowedRanges.has(updates?.range) ? updates.range : undefined
+      range: allowedRanges.has(updates?.range) ? updates.range : undefined,
+      alwaysOnTop: typeof updates?.alwaysOnTop === 'boolean' ? updates.alwaysOnTop : undefined
     }),
   onWidgetsChanged: (callback) => {
     if (typeof callback !== 'function') return () => {};

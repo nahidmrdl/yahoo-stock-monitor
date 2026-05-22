@@ -29,6 +29,7 @@ function normalizeTickerWidget(widget) {
     symbol: yahooService.normalizeSymbol(widget.symbol),
     range: ALLOWED_WIDGET_RANGES.has(widget.range) ? widget.range : '1d',
     refreshIntervalSeconds: Number(widget.refreshIntervalSeconds) || 30,
+    alwaysOnTop: Boolean(widget.alwaysOnTop),
     bounds: widget.bounds || null
   };
 }
@@ -78,6 +79,15 @@ function removeTickerWidget(widgetId) {
   sendTickerWidgetsToDashboard();
 }
 
+function updateTickerWidget(widgetId, updates) {
+  const nextWidgets = getTickerWidgets().map((widget) =>
+    widget.id === widgetId ? { ...widget, ...updates } : widget
+  );
+  saveTickerWidgets(nextWidgets);
+  sendTickerWidgetsToDashboard();
+  return nextWidgets.find((widget) => widget.id === widgetId);
+}
+
 function createTickerWidgetWindow(widget) {
   if (tickerWidgetWindows.has(widget.id)) {
     const existingWindow = tickerWidgetWindows.get(widget.id);
@@ -106,10 +116,26 @@ function createTickerWidgetWindow(widget) {
   });
 
   widgetWindow.webContents.on('context-menu', () => {
+    const currentWidget = getTickerWidgets().find((item) => item.id === widget.id) || widget;
+    const isAlwaysOnTop = widgetWindow.isAlwaysOnTop();
+
     Menu.buildFromTemplate([
       {
         label: 'Open Dashboard',
         click: () => createWindow()
+      },
+      {
+        label: isAlwaysOnTop ? 'Turn Off Always on Top' : 'Keep Always on Top',
+        type: 'checkbox',
+        checked: isAlwaysOnTop,
+        click: () => {
+          const nextValue = !widgetWindow.isAlwaysOnTop();
+          widgetWindow.setAlwaysOnTop(nextValue, 'screen-saver');
+          updateTickerWidget(currentWidget.id, {
+            alwaysOnTop: nextValue,
+            bounds: widgetWindow.getBounds()
+          });
+        }
       },
       {
         label: 'Close Widget',
@@ -194,6 +220,7 @@ ipcMain.handle('widgets:create', (_event, options = {}) => {
     symbol,
     range: options.range || '1d',
     refreshIntervalSeconds: Number(options.refreshIntervalSeconds) || 30,
+    alwaysOnTop: false,
     bounds: {
       width: windowService.TICKER_WIDGET_PRESET.width,
       height: windowService.TICKER_WIDGET_PRESET.height,
@@ -259,6 +286,8 @@ ipcMain.handle('widgets:update-current', (event, updates = {}) => {
       ? {
           ...widget,
           range: ALLOWED_WIDGET_RANGES.has(updates.range) ? updates.range : widget.range,
+          alwaysOnTop:
+            typeof updates.alwaysOnTop === 'boolean' ? updates.alwaysOnTop : widget.alwaysOnTop,
           bounds: widgetWindow.getBounds()
         }
       : widget

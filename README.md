@@ -16,11 +16,11 @@ npm start
 - Mini charts from Yahoo Finance public chart endpoint
 - Dashboard ranges: 1D, 5D, 1M, 6M, 1Y, All
 - Saved watchlist in local storage
-- Create up to 15 always-on-top desktop widgets
+- Create up to 15 desktop widgets
 - Widget positions, sizes, chart ranges, and symbols are saved
 - Widget ranges: 1D, 1W, 1M, 6M, 1Y, All
 - Hoverable widget charts
-- Right-click a widget to open the dashboard or close that widget
+- Right-click a widget to open the dashboard, close that widget, or toggle always-on-top for that widget
 - Start with Windows support so saved widgets can return after restart
 - Closing the dashboard exits the app; closing the last widget also exits the app
 

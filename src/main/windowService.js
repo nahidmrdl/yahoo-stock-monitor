@@ -69,10 +69,10 @@ function createTickerWidgetWindow({ widget, preloadPath, rendererPath }) {
     minHeight: TICKER_WIDGET_PRESET.minHeight,
     frame: false,
     transparent: true,
-    resizable: true,
+    resizable: false,
     movable: true,
     skipTaskbar: true,
-    alwaysOnTop: true,
+    alwaysOnTop: Boolean(widget.alwaysOnTop),
     hasShadow: false,
     backgroundColor: '#00000000',
     title: `${widget.symbol} Widget`,
@@ -84,7 +84,9 @@ function createTickerWidgetWindow({ widget, preloadPath, rendererPath }) {
     }
   });
 
-  window.setAlwaysOnTop(true, 'screen-saver');
+  if (widget.alwaysOnTop) {
+    window.setAlwaysOnTop(true, 'screen-saver');
+  }
   window.loadFile(rendererPath, {
     query: {
       id: widget.id,
