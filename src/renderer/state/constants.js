@@ -12,7 +12,7 @@
     STORAGE_KEYS: {
       SYMBOLS: 'stock-monitor-symbols-v1',
       RANGE: 'stock-monitor-chart-range-v1',
-      REFRESH_INTERVAL: 'stock-monitor-refresh-interval-seconds-v2'
+      REFRESH_INTERVAL: 'stock-monitor-refresh-interval-seconds-v3'
     }
   };
 })();

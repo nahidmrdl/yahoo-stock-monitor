@@ -14,7 +14,8 @@ const store = new Store({
     bounds: { width: 1180, height: 760 },
     alwaysOnTop: false,
     tickerWidgets: [],
-    launchAtLogin: false
+    launchAtLogin: false,
+    refreshIntervalMigrationVersion: 0
   }
 });
 
@@ -23,6 +24,8 @@ const tickerWidgetWindows = new Map();
 const ALLOWED_WIDGET_RANGES = new Set(['1d', '5d', '1mo', '6mo', '1y', 'max']);
 const APP_ID = 'com.local.yahoostockmonitor';
 const DEFAULT_WIDGET_RANGE = '1mo';
+const DEFAULT_REFRESH_SECONDS = 30;
+const REFRESH_INTERVAL_MIGRATION_VERSION = 1;
 
 app.setName('Yahoo Stock Monitor');
 app.setAppUserModelId(APP_ID);
@@ -46,6 +49,18 @@ function getTickerWidgets() {
 
 function saveTickerWidgets(widgets) {
   store.set('tickerWidgets', widgets.map(normalizeTickerWidget));
+}
+
+function migrateRefreshIntervals() {
+  if (store.get('refreshIntervalMigrationVersion') >= REFRESH_INTERVAL_MIGRATION_VERSION) return;
+
+  const widgets = getTickerWidgets().map((widget) => ({
+    ...widget,
+    refreshIntervalSeconds: DEFAULT_REFRESH_SECONDS
+  }));
+
+  saveTickerWidgets(widgets);
+  store.set('refreshIntervalMigrationVersion', REFRESH_INTERVAL_MIGRATION_VERSION);
 }
 
 function sendTickerWidgetsToDashboard() {
@@ -166,6 +181,7 @@ function restoreTickerWidgets() {
 
 app.whenReady().then(() => {
   Menu.setApplicationMenu(null);
+  migrateRefreshIntervals();
   app.setLoginItemSettings({ openAtLogin: Boolean(store.get('launchAtLogin')) });
   createWindow();
   restoreTickerWidgets();
