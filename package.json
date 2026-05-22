@@ -1,0 +1,33 @@
+{
+  "name": "yahoo-stock-monitor",
+  "version": "1.0.2",
+  "description": "A small free desktop stock monitor using Yahoo Finance public endpoints.",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "package:win": "electron-builder --win portable",
+    "package:mac": "electron-builder --mac dmg",
+    "package:linux": "electron-builder --linux AppImage"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.7",
+    "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.local.yahoostockmonitor",
+    "productName": "Yahoo Stock Monitor",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

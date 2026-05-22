@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yahoo Stock Monitor</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>Stock Monitor</h1>
+          <p class="subtitle">
+            Yahoo Finance quotes · auto-refresh every <span id="refreshSeconds">30</span>s
+          </p>
+        </div>
+
+        <div class="top-actions">
+          <button id="refreshNowBtn" class="secondary" type="button">Refresh now</button>
+          <button id="pauseBtn" class="secondary" type="button">Pause</button>
+          <button id="alwaysOnTopBtn" class="secondary" type="button">Pin window</button>
+        </div>
+      </header>
+
+      <section class="controls">
+        <form id="addForm" class="add-form">
+          <input
+            id="symbolInput"
+            type="text"
+            placeholder="Add ticker: AAPL, NVDA, SAP.DE"
+            autocomplete="off"
+          />
+          <button type="submit">Add</button>
+        </form>
+
+        <form id="refreshConfigForm" class="refresh-config-form">
+          <label for="refreshIntervalInput">Refresh every</label>
+          <input
+            id="refreshIntervalInput"
+            type="number"
+            min="5"
+            max="3600"
+            step="1"
+            inputmode="numeric"
+          />
+          <span>sec</span>
+          <button type="submit" class="secondary">Save</button>
+        </form>
+
+        <div class="range-group" aria-label="Chart range">
+          <button class="range-btn active" type="button" data-range="1d">1D</button>
+          <button class="range-btn" type="button" data-range="5d">5D</button>
+          <button class="range-btn" type="button" data-range="1mo">1M</button>
+          <button class="range-btn" type="button" data-range="6mo">6M</button>
+          <button class="range-btn" type="button" data-range="1y">1Y</button>
+        </div>
+      </section>
+
+      <section class="status-row">
+        <span id="statusText">Ready.</span>
+        <span id="lastUpdated">Not updated yet.</span>
+      </section>
+
+      <main id="cards" class="cards"></main>
+
+      <section id="emptyState" class="empty-state hidden">
+        <h2>Add your first ticker</h2>
+        <p>
+          Try
+          <button class="link-btn" type="button" data-demo="AAPL">AAPL</button>,
+          <button class="link-btn" type="button" data-demo="NVDA">NVDA</button>,
+          or
+          <button class="link-btn" type="button" data-demo="SAP.DE">SAP.DE</button>.
+        </p>
+      </section>
+    </div>
+
+    <template id="stockCardTemplate">
+      <article class="stock-card" draggable="true">
+        <div class="card-header">
+          <div class="title-block">
+            <h2 class="symbol"></h2>
+            <p class="name"></p>
+          </div>
+
+          <div class="card-actions">
+            <button class="drag-handle" type="button" title="Drag to reorder">⋮⋮</button>
+            <button class="move-btn move-left-btn" type="button" title="Move left">←</button>
+            <button class="move-btn move-right-btn" type="button" title="Move right">→</button>
+            <button class="remove-btn" type="button" title="Remove ticker">×</button>
+          </div>
+        </div>
+
+        <div class="price-row">
+          <span class="price">—</span>
+          <span class="currency"></span>
+        </div>
+
+        <div class="change-row">
+          <span class="change-pill">—</span>
+          <span class="meta"></span>
+        </div>
+
+        <p class="change-help">Change vs previous close</p>
+
+        <div class="chart-wrap">
+          <canvas></canvas>
+        </div>
+
+        <p class="error hidden"></p>
+      </article>
+    </template>
+
+    <script src="../../node_modules/chart.js/dist/chart.umd.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

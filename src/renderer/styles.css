@@ -1,0 +1,397 @@
+:root {
+  color-scheme: dark;
+  --bg: #101014;
+  --panel: #171721;
+  --panel-2: #1f1f2c;
+  --text: #f4f4f7;
+  --muted: #9b9bac;
+  --border: rgba(255, 255, 255, 0.08);
+  --green: #35d07f;
+  --red: #ff5f6d;
+  --yellow: #ffd166;
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(89, 86, 233, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(53, 208, 127, 0.1), transparent 26%),
+    var(--bg);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.app-shell {
+  width: min(1600px, 100%);
+  margin: 0 auto;
+  padding: 14px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.1;
+}
+
+.subtitle,
+.name,
+.meta,
+.status-row,
+.empty-state p,
+.change-help,
+.refresh-config-form {
+  color: var(--muted);
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+}
+
+.top-actions,
+.controls,
+.range-group,
+.add-form,
+.status-row,
+.refresh-config-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 9px;
+}
+
+.add-form {
+  flex: 1 1 300px;
+}
+
+.refresh-config-form {
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+input {
+  width: min(390px, 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 9px 11px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
+}
+
+#refreshIntervalInput {
+  width: 74px;
+  padding: 9px 9px;
+  text-align: center;
+}
+
+input:focus {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+button {
+  border-radius: 12px;
+  padding: 9px 11px;
+  color: #101014;
+  background: var(--text);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+button.secondary,
+.range-btn {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
+}
+
+button.secondary:hover,
+.range-btn:hover,
+.link-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.range-btn.active,
+button.pinned {
+  color: #101014;
+  background: var(--yellow);
+}
+
+.status-row {
+  justify-content: space-between;
+  min-height: 18px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 10px;
+}
+
+.stock-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+    var(--panel);
+  box-shadow: var(--shadow);
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    opacity 150ms ease;
+}
+
+.stock-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.055), transparent 34%);
+}
+
+.stock-card.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.stock-card.drag-over {
+  border-color: var(--yellow);
+}
+
+.card-header,
+.price-row,
+.change-row {
+  position: relative;
+  z-index: 1;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+.title-block {
+  min-width: 0;
+}
+
+.symbol {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: 0.02em;
+}
+
+.name {
+  min-height: 17px;
+  margin: 3px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 155px;
+  font-size: 11px;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.drag-handle,
+.move-btn,
+.remove-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.drag-handle {
+  cursor: grab;
+  letter-spacing: -3px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.remove-btn {
+  font-size: 18px;
+}
+
+.drag-handle:hover,
+.move-btn:hover,
+.remove-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.price {
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.currency {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.change-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  margin-top: 7px;
+}
+
+.change-pill {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.change-help {
+  position: relative;
+  z-index: 1;
+  margin: 6px 0 0;
+  font-size: 11px;
+}
+
+.positive {
+  color: var(--green);
+}
+
+.negative {
+  color: var(--red);
+}
+
+.chart-wrap {
+  position: relative;
+  z-index: 1;
+  height: 95px;
+  margin-top: 8px;
+  padding-top: 4px;
+}
+
+.error {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 0;
+  color: var(--red);
+  font-size: 11px;
+}
+
+.empty-state {
+  margin-top: 28px;
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  padding: 28px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.empty-state h2 {
+  margin: 0 0 8px;
+}
+
+.link-btn {
+  padding: 0;
+  color: var(--yellow);
+  background: transparent;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (min-width: 1300px) {
+  .cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .refresh-config-form,
+  .range-group {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 780px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .top-actions,
+  .range-group {
+    flex-wrap: wrap;
+  }
+
+  .status-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
