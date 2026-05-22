@@ -2,7 +2,7 @@
   const params = new URLSearchParams(window.location.search);
   const symbol = String(params.get('symbol') || '').trim().toUpperCase();
   let range = params.get('range') || '1mo';
-  const refreshSeconds = Math.min(3600, Math.max(5, Number(params.get('refresh')) || 30));
+  let refreshSeconds = Math.min(3600, Math.max(5, Number(params.get('refresh')) || 30));
   const { formatChange, formatPrice, chartLabel } = window.StockMonitor.formatting;
 
   const els = {
@@ -162,6 +162,12 @@
       await window.stockApi.updateCurrentWidget({ range });
       await refreshChart();
     });
+  });
+
+  window.stockApi.onWidgetRefreshIntervalChanged((seconds) => {
+    refreshSeconds = Math.min(3600, Math.max(5, Math.round(Number(seconds) || 30)));
+    els.countdown.textContent = `Next ${refreshSeconds}s`;
+    scheduleNextRefresh();
   });
 
   els.symbol.textContent = symbol || '----';

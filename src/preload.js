@@ -33,6 +33,8 @@ contextBridge.exposeInMainWorld('stockApi', {
       refreshIntervalSeconds: Number(options?.refreshIntervalSeconds) || 30
     }),
   closeWidget: (id) => ipcRenderer.invoke('widgets:close', String(id || '')),
+  setWidgetRefreshInterval: (seconds) =>
+    ipcRenderer.invoke('widgets:set-refresh-interval', Number(seconds) || 30),
   closeCurrentWidget: () => ipcRenderer.invoke('widgets:close-current'),
   updateCurrentWidget: (updates) =>
     ipcRenderer.invoke('widgets:update-current', {
@@ -44,5 +46,11 @@ contextBridge.exposeInMainWorld('stockApi', {
     const listener = (_event, widgets) => callback(widgets);
     ipcRenderer.on('widgets:changed', listener);
     return () => ipcRenderer.removeListener('widgets:changed', listener);
+  },
+  onWidgetRefreshIntervalChanged: (callback) => {
+    if (typeof callback !== 'function') return () => {};
+    const listener = (_event, seconds) => callback(seconds);
+    ipcRenderer.on('widgets:refresh-interval-changed', listener);
+    return () => ipcRenderer.removeListener('widgets:refresh-interval-changed', listener);
   }
 });

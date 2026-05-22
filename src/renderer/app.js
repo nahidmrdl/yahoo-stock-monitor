@@ -246,6 +246,7 @@
     state.refreshIntervalSeconds = storage.saveRefreshIntervalSeconds(nextSeconds);
     dom.els.refreshIntervalInput.value = String(state.refreshIntervalSeconds);
     controls.setStatus(`Refresh interval saved: every ${state.refreshIntervalSeconds}s.`);
+    stockApi.setWidgetRefreshInterval(state.refreshIntervalSeconds).catch(() => {});
     scheduleNextRefresh();
   }
 
@@ -269,14 +270,19 @@
     render();
     refreshWidgetList();
     stockApi.onWidgetsChanged(renderWidgetList);
+    stockApi.setWidgetRefreshInterval(state.refreshIntervalSeconds).catch(() => {});
     stockApi.getLaunchAtLogin().then((result) => {
       dom.els.launchAtLoginToggle.checked = Boolean(result.enabled);
     });
     stockApi.getAppInfo().then((info) => {
-      dom.els.appVersionLabel.textContent = info?.version || '-';
+      dom.els.appVersionLabel.textContent = info?.version || 'unknown';
+    }).catch(() => {
+      dom.els.appVersionLabel.textContent = 'unknown';
     });
     window.addEventListener('beforeunload', stopDashboardRefresh);
-    refreshAll();
+    requestAnimationFrame(() => {
+      refreshAll();
+    });
   }
 
   init();

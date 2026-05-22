@@ -38,6 +38,9 @@
     closeWidget(id) {
       return getApi().closeWidget(id);
     },
+    setWidgetRefreshInterval(seconds) {
+      return getApi().setWidgetRefreshInterval(seconds);
+    },
     closeCurrentWidget() {
       return getApi().closeCurrentWidget();
     },
@@ -46,6 +49,9 @@
     },
     onWidgetsChanged(callback) {
       return getApi().onWidgetsChanged(callback);
+    },
+    onWidgetRefreshIntervalChanged(callback) {
+      return getApi().onWidgetRefreshIntervalChanged(callback);
     }
   };
 })();

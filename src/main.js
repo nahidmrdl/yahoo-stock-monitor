@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const Store = require('electron-store');
 const yahooService = require('./main/yahooService');
 const windowService = require('./main/windowService');
+const packageInfo = require('../package.json');
 
 const gotSingleInstanceLock = app.requestSingleInstanceLock();
 
@@ -51,6 +52,14 @@ function saveTickerWidgets(widgets) {
 function sendTickerWidgetsToDashboard() {
   if (!mainWindow || mainWindow.isDestroyed()) return;
   mainWindow.webContents.send('widgets:changed', getTickerWidgets());
+}
+
+function broadcastWidgetRefreshInterval(seconds) {
+  tickerWidgetWindows.forEach((window) => {
+    if (!window.isDestroyed()) {
+      window.webContents.send('widgets:refresh-interval-changed', seconds);
+    }
+  });
 }
 
 function quitIfNoVisibleWindows() {
@@ -182,7 +191,7 @@ ipcMain.handle('app:get-window-state', () => {
 ipcMain.handle('app:get-info', () => {
   return {
     name: app.getName(),
-    version: app.getVersion()
+    version: app.getVersion() || packageInfo.version
   };
 });
 
@@ -216,6 +225,10 @@ ipcMain.handle('widgets:create', (_event, options = {}) => {
   const widgets = getTickerWidgets();
   if (widgets.length >= 15) {
     return { ok: false, error: 'Widget limit reached. Close one before adding another.' };
+  }
+
+  if (widgets.some((widget) => widget.symbol === symbol)) {
+    return { ok: false, error: `${symbol} already has a desktop widget.` };
   }
 
   const id = `${symbol}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -254,6 +267,20 @@ ipcMain.handle('widgets:close', (_event, id) => {
   }
 
   return { ok: true, widgets: getTickerWidgets() };
+});
+
+ipcMain.handle('widgets:set-refresh-interval', (_event, seconds) => {
+  const refreshIntervalSeconds = Math.min(3600, Math.max(5, Math.round(Number(seconds) || 30)));
+  const widgets = getTickerWidgets().map((widget) => ({
+    ...widget,
+    refreshIntervalSeconds
+  }));
+
+  saveTickerWidgets(widgets);
+  sendTickerWidgetsToDashboard();
+  broadcastWidgetRefreshInterval(refreshIntervalSeconds);
+
+  return { ok: true, widgets, refreshIntervalSeconds };
 });
 
 ipcMain.handle('widgets:close-current', (event) => {
