@@ -1,5 +1,53 @@
-node_modules
+# dependencies
+node_modules/
+
+# Electron build outputs
+dist/
+build/
+out/
+release/
+*.exe
+*.msi
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+*.snap
+*.blockmap
+latest.yml
+builder-effective-config.yaml
+
+# logs
+logs/
+*.log
 npm-debug.log*
-dist
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# local env files
 .env
+.env.local
+.env.*.local
+
+# OS/editor junk
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# cache/temp
+.cache/
+.tmp/
+temp/
+tmp/
+
+# coverage
+coverage/
+
+# Electron/electron-builder cache
+.electron/
+.electron-gyp/
