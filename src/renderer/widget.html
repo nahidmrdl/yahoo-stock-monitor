@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stock Widget</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body class="ticker-widget-window">
+    <main class="ticker-widget">
+      <header class="ticker-widget-drag">
+        <div>
+          <h1 id="widgetSymbol">----</h1>
+          <p id="widgetStatus">Loading</p>
+        </div>
+        <button id="widgetCloseBtn" type="button" title="Close widget">&times;</button>
+      </header>
+
+      <section class="ticker-widget-price">
+        <span id="widgetPrice">-</span>
+        <span id="widgetCurrency"></span>
+      </section>
+
+      <section class="ticker-widget-change">
+        <span id="widgetChange">-</span>
+        <span id="widgetCountdown">Next 30s</span>
+      </section>
+
+      <div class="ticker-widget-chart">
+        <canvas id="widgetChart"></canvas>
+      </div>
+    </main>
+
+    <script src="../../node_modules/chart.js/dist/chart.umd.js"></script>
+    <script src="state/constants.js"></script>
+    <script src="ui/formatting.js"></script>
+    <script src="widget.js"></script>
+  </body>
+</html>

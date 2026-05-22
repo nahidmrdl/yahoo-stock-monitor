@@ -20,7 +20,8 @@
     onRangeChange,
     onViewModeToggle,
     onWidgetBack,
-    onRefreshIntervalChange
+    onRefreshIntervalChange,
+    onLaunchAtLoginToggle
   }) {
     els.refreshIntervalInput.value = String(state.refreshIntervalSeconds);
     els.refreshIntervalLabel.textContent = String(state.refreshIntervalSeconds);
@@ -56,6 +57,10 @@
     els.pauseBtn.addEventListener('click', onPauseToggle);
     els.viewModeBtn.addEventListener('click', onViewModeToggle);
     els.widgetBackBtn.addEventListener('click', onWidgetBack);
+
+    els.launchAtLoginToggle.addEventListener('change', () => {
+      onLaunchAtLoginToggle(els.launchAtLoginToggle.checked);
+    });
 
     els.alwaysOnTopBtn.addEventListener('click', async () => {
       const currentlyPinned = els.alwaysOnTopBtn.classList.contains('pinned');

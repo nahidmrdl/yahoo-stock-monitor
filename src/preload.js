@@ -20,5 +20,22 @@ contextBridge.exposeInMainWorld('stockApi', {
   setWindowPreset: (preset) => {
     const cleanPreset = allowedPresets.has(preset) ? preset : 'fullscreen';
     return ipcRenderer.invoke('app:set-window-preset', cleanPreset);
+  },
+  getLaunchAtLogin: () => ipcRenderer.invoke('app:get-launch-at-login'),
+  setLaunchAtLogin: (enabled) => ipcRenderer.invoke('app:set-launch-at-login', Boolean(enabled)),
+  listWidgets: () => ipcRenderer.invoke('widgets:list'),
+  createWidget: (options) =>
+    ipcRenderer.invoke('widgets:create', {
+      symbol: String(options?.symbol || '').trim().toUpperCase(),
+      range: allowedRanges.has(options?.range) ? options.range : '1d',
+      refreshIntervalSeconds: Number(options?.refreshIntervalSeconds) || 30
+    }),
+  closeWidget: (id) => ipcRenderer.invoke('widgets:close', String(id || '')),
+  closeCurrentWidget: () => ipcRenderer.invoke('widgets:close-current'),
+  onWidgetsChanged: (callback) => {
+    if (typeof callback !== 'function') return () => {};
+    const listener = (_event, widgets) => callback(widgets);
+    ipcRenderer.on('widgets:changed', listener);
+    return () => ipcRenderer.removeListener('widgets:changed', listener);
   }
 });

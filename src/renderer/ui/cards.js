@@ -57,6 +57,7 @@
     onRemove,
     onMove,
     onMoveBefore,
+    onCreateWidget,
     onFocus
   }) {
     els.cards.innerHTML = '';
@@ -76,6 +77,7 @@
       const moveLeftBtn = node.querySelector('.move-left-btn');
       const moveRightBtn = node.querySelector('.move-right-btn');
       const removeBtn = node.querySelector('.remove-btn');
+      const createWidgetBtn = node.querySelector('.create-widget-btn');
 
       moveLeftBtn.disabled = globalIndex === 0;
       moveRightBtn.disabled = globalIndex === symbols.length - 1;
@@ -83,6 +85,11 @@
       removeBtn.addEventListener('click', (event) => {
         event.stopPropagation();
         onRemove(symbol);
+      });
+
+      createWidgetBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        onCreateWidget(symbol);
       });
 
       moveLeftBtn.addEventListener('click', (event) => {

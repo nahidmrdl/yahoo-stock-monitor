@@ -18,6 +18,13 @@ const WINDOW_PRESETS = {
   }
 };
 
+const TICKER_WIDGET_PRESET = {
+  width: 220,
+  height: 132,
+  minWidth: 180,
+  minHeight: 110
+};
+
 function createMainWindow({ store, preloadPath, rendererPath }) {
   const bounds = store.get('bounds') || WINDOW_PRESETS.fullscreen;
   const alwaysOnTop = store.get('alwaysOnTop');
@@ -51,11 +58,58 @@ function createMainWindow({ store, preloadPath, rendererPath }) {
   return window;
 }
 
+function createTickerWidgetWindow({ widget, preloadPath, rendererPath }) {
+  const bounds = widget.bounds || {};
+  const window = new BrowserWindow({
+    width: bounds.width || TICKER_WIDGET_PRESET.width,
+    height: bounds.height || TICKER_WIDGET_PRESET.height,
+    x: bounds.x,
+    y: bounds.y,
+    minWidth: TICKER_WIDGET_PRESET.minWidth,
+    minHeight: TICKER_WIDGET_PRESET.minHeight,
+    frame: false,
+    transparent: true,
+    resizable: true,
+    movable: true,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    hasShadow: false,
+    backgroundColor: '#00000000',
+    title: `${widget.symbol} Widget`,
+    autoHideMenuBar: true,
+    webPreferences: {
+      preload: preloadPath,
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+
+  window.setAlwaysOnTop(true, 'screen-saver');
+  window.loadFile(rendererPath, {
+    query: {
+      id: widget.id,
+      symbol: widget.symbol,
+      range: widget.range || '1d',
+      refresh: String(widget.refreshIntervalSeconds || 30)
+    }
+  });
+
+  return window;
+}
+
 function createWindow(store) {
   return createMainWindow({
     store,
     preloadPath: path.join(__dirname, '..', 'preload.js'),
     rendererPath: path.join(__dirname, '..', 'renderer', 'index.html')
+  });
+}
+
+function createTickerWidget(widget) {
+  return createTickerWidgetWindow({
+    widget,
+    preloadPath: path.join(__dirname, '..', 'preload.js'),
+    rendererPath: path.join(__dirname, '..', 'renderer', 'widget.html')
   });
 }
 
@@ -92,8 +146,10 @@ function setAlwaysOnTop(window, store, enabled) {
 }
 
 module.exports = {
+  TICKER_WIDGET_PRESET,
   WINDOW_PRESETS,
   applyWindowPreset,
+  createTickerWidget,
   createWindow,
   getWindowState,
   setAlwaysOnTop

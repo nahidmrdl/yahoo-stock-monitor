@@ -20,6 +20,9 @@
       alwaysOnTopBtn: $('#alwaysOnTopBtn'),
       viewModeBtn: $('#viewModeBtn'),
       widgetBackBtn: $('#widgetBackBtn'),
+      launchAtLoginToggle: $('#launchAtLoginToggle'),
+      widgetList: $('#widgetList'),
+      widgetCount: $('#widgetCount'),
       refreshIntervalLabel: $('#refreshIntervalLabel'),
       template: $('#stockCardTemplate')
     },

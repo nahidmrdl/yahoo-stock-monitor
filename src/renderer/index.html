@@ -61,6 +61,21 @@
         </div>
       </section>
 
+      <section class="widget-manager">
+        <div class="widget-manager-header">
+          <div>
+            <h2>Desktop Widgets</h2>
+            <p>Open tiny ticker widgets from any stock card. Positions and sizes are saved.</p>
+          </div>
+          <label class="toggle-row">
+            <input id="launchAtLoginToggle" type="checkbox" />
+            <span>Start with Windows</span>
+          </label>
+          <span id="widgetCount" class="widget-count">0/15</span>
+        </div>
+        <div id="widgetList" class="widget-list"></div>
+      </section>
+
       <section class="status-row">
         <span id="statusText">Ready.</span>
         <span id="widgetPageText" class="hidden"></span>
@@ -94,6 +109,7 @@
             <button class="drag-handle" type="button" title="Drag to reorder">::</button>
             <button class="move-btn move-left-btn" type="button" title="Move left">&lt;</button>
             <button class="move-btn move-right-btn" type="button" title="Move right">&gt;</button>
+            <button class="create-widget-btn" type="button" title="Open desktop widget">W</button>
             <button class="remove-btn" type="button" title="Remove ticker">&times;</button>
           </div>
         </div>

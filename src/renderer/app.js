@@ -64,6 +64,7 @@
       onRemove: removeSymbol,
       onMove: moveSymbol,
       onMoveBefore: moveSymbolBefore,
+      onCreateWidget: createTickerWidget,
       onFocus: focusWidgetSymbol
     });
   }
@@ -138,6 +139,68 @@
     state.focusedSymbol = storage.saveFocusedSymbol(symbol);
     render();
     refreshVisibleCharts();
+  }
+
+  async function refreshWidgetList() {
+    try {
+      const result = await stockApi.listWidgets();
+      renderWidgetList(result?.widgets || []);
+    } catch (error) {
+      controls.setStatus(`Widget list failed: ${error?.message || error}`);
+    }
+  }
+
+  function renderWidgetList(widgets) {
+    dom.els.widgetCount.textContent = `${widgets.length}/15`;
+    dom.els.widgetList.innerHTML = '';
+
+    if (!widgets.length) {
+      const empty = document.createElement('p');
+      empty.className = 'widget-empty';
+      empty.textContent = 'No desktop widgets yet.';
+      dom.els.widgetList.appendChild(empty);
+      return;
+    }
+
+    widgets.forEach((widget) => {
+      const row = document.createElement('div');
+      row.className = 'widget-row';
+
+      const label = document.createElement('span');
+      label.textContent = widget.symbol;
+
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'secondary';
+      closeBtn.textContent = 'Close';
+      closeBtn.addEventListener('click', async () => {
+        await stockApi.closeWidget(widget.id);
+        await refreshWidgetList();
+      });
+
+      row.append(label, closeBtn);
+      dom.els.widgetList.appendChild(row);
+    });
+  }
+
+  async function createTickerWidget(symbol) {
+    const result = await stockApi.createWidget({
+      symbol,
+      range: state.chartRange,
+      refreshIntervalSeconds: state.refreshIntervalSeconds
+    });
+
+    if (!result?.ok) {
+      controls.setStatus(result?.error || 'Could not create widget.');
+      return;
+    }
+
+    if (result.launchAtLogin) {
+      dom.els.launchAtLoginToggle.checked = true;
+    }
+
+    controls.setStatus(`Created desktop widget for ${symbol}.`);
+    renderWidgetList(result.widgets || []);
   }
 
   function scheduleNextRefresh() {
@@ -284,7 +347,12 @@
       onRangeChange,
       onViewModeToggle,
       onWidgetBack,
-      onRefreshIntervalChange
+      onRefreshIntervalChange,
+      onLaunchAtLoginToggle: async (enabled) => {
+        const result = await stockApi.setLaunchAtLogin(enabled);
+        dom.els.launchAtLoginToggle.checked = Boolean(result.enabled);
+        controls.setStatus(result.enabled ? 'Widgets will reopen when Windows starts.' : 'Start with Windows disabled.');
+      }
     });
 
     timers.setRefreshLabels(state.refreshIntervalSeconds, state.paused);
@@ -296,6 +364,11 @@
       onAlwaysOnTopChanged: controls.setPinnedState
     });
     startWidgetCycle();
+    refreshWidgetList();
+    stockApi.onWidgetsChanged(renderWidgetList);
+    stockApi.getLaunchAtLogin().then((result) => {
+      dom.els.launchAtLoginToggle.checked = Boolean(result.enabled);
+    });
     refreshAll();
   }
 

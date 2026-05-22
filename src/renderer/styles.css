@@ -238,6 +238,7 @@ button.pinned {
 
 .drag-handle,
 .move-btn,
+.create-widget-btn,
 .remove-btn {
   width: 24px;
   height: 24px;
@@ -264,6 +265,7 @@ button.pinned {
 
 .drag-handle:hover,
 .move-btn:hover,
+.create-widget-btn:hover,
 .remove-btn:hover {
   color: var(--text);
   background: rgba(255, 255, 255, 0.13);
@@ -349,6 +351,80 @@ button.pinned {
   margin: 0 0 8px;
 }
 
+.widget-manager {
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.widget-manager-header,
+.widget-list,
+.widget-row,
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.widget-manager-header {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.widget-manager h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.widget-manager p,
+.widget-empty {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.toggle-row {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.toggle-row input {
+  width: auto;
+}
+
+.widget-count {
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--yellow);
+  background: rgba(255, 209, 102, 0.1);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.widget-list {
+  align-items: stretch;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.widget-row {
+  justify-content: space-between;
+  min-width: 150px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.widget-row button {
+  padding: 5px 7px;
+  font-size: 11px;
+}
+
 .link-btn {
   padding: 0;
   color: var(--yellow);
@@ -386,6 +462,10 @@ body.widget-mode .subtitle {
 }
 
 body.widget-mode .controls {
+  display: none;
+}
+
+body.widget-mode .widget-manager {
   display: none;
 }
 
@@ -490,6 +570,103 @@ body.widget-focus-mode .stock-card.focused-card .change-pill {
 body.widget-focus-mode .stock-card.focused-card .chart-wrap {
   height: 310px;
   margin-top: 18px;
+}
+
+body.ticker-widget-window {
+  min-height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.ticker-widget {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 9px;
+  background: rgba(16, 16, 20, 0.86);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+}
+
+.ticker-widget-drag {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  -webkit-app-region: drag;
+}
+
+.ticker-widget h1 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.ticker-widget p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+#widgetCloseBtn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 15px;
+  line-height: 1;
+  -webkit-app-region: no-drag;
+}
+
+.ticker-widget-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+#widgetPrice {
+  font-size: 26px;
+  font-weight: 850;
+}
+
+#widgetCurrency {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.ticker-widget-change {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+#widgetChange {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#widgetCountdown {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.ticker-widget-chart {
+  height: calc(100vh - 86px);
+  min-height: 24px;
+  margin-top: 3px;
 }
 
 @media (max-width: 980px) {
