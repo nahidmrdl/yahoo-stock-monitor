@@ -484,6 +484,14 @@ body.ticker-widget-window {
   font-size: 10px;
 }
 
+.ticker-widget-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  -webkit-app-region: no-drag;
+}
+
+#widgetDashboardBtn,
 #widgetCloseBtn {
   width: 22px;
   height: 22px;
@@ -491,9 +499,15 @@ body.ticker-widget-window {
   border-radius: 999px;
   color: var(--text);
   background: rgba(255, 255, 255, 0.08);
-  font-size: 15px;
   line-height: 1;
-  -webkit-app-region: no-drag;
+}
+
+#widgetDashboardBtn {
+  font-size: 11px;
+}
+
+#widgetCloseBtn {
+  font-size: 15px;
 }
 
 .ticker-widget-price {

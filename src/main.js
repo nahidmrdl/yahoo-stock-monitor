@@ -19,7 +19,6 @@ const store = new Store({
 });
 
 let mainWindow;
-let isQuitting = false;
 const tickerWidgetWindows = new Map();
 const ALLOWED_WIDGET_RANGES = new Set(['1d', '5d', '1mo', '6mo', '1y', 'max']);
 
@@ -66,11 +65,9 @@ function createWindow() {
   }
 
   mainWindow = windowService.createWindow(store);
-  mainWindow.on('close', () => {
-    if (!isQuitting) app.quit();
-  });
   mainWindow.on('closed', () => {
     mainWindow = null;
+    quitIfNoVisibleWindows();
   });
 }
 
@@ -167,10 +164,6 @@ app.whenReady().then(() => {
 
 app.on('second-instance', () => {
   createWindow();
-});
-
-app.on('before-quit', () => {
-  isQuitting = true;
 });
 
 app.on('window-all-closed', () => {

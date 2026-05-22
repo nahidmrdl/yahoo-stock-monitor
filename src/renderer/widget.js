@@ -12,6 +12,7 @@
     currency: document.querySelector('#widgetCurrency'),
     change: document.querySelector('#widgetChange'),
     countdown: document.querySelector('#widgetCountdown'),
+    dashboardBtn: document.querySelector('#widgetDashboardBtn'),
     closeBtn: document.querySelector('#widgetCloseBtn'),
     rangeButtons: Array.from(document.querySelectorAll('.ticker-widget-ranges button')),
     chart: document.querySelector('#widgetChart')
@@ -149,6 +150,10 @@
 
   els.closeBtn.addEventListener('click', () => {
     window.stockApi.closeCurrentWidget();
+  });
+
+  els.dashboardBtn.addEventListener('click', () => {
+    window.stockApi.openDashboard();
   });
 
   els.rangeButtons.forEach((button) => {
